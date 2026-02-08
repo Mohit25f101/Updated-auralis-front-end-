@@ -127,6 +127,8 @@ async function analyzeAudio(file) {
         if (!response.ok) throw new Error("Server connection failed");
 
         const data = await response.json();
+        console.log("🔥 BACKEND JSON:", data); //temporary added
+
         if (data.error) throw new Error(data.error);
 
         currentAnalysisData = data;
@@ -134,10 +136,19 @@ async function analyzeAudio(file) {
         document.getElementById("locationText").textContent = data.location || "Unknown";
         document.getElementById("situationText").textContent = data.situation || "Unknown";
 
+        const emotion = data.emotions?.primary_emotion;
+        const intensity = data.emotions?.intensity ?? 0;
+
         document.getElementById("emotionText").textContent =
-         data.emotion
-            ? `${data.emotion} (${Math.round((data.emotion_score || 0) * 100)}%)`
-             : "Unknown";
+            emotion
+                ? `${emotion} (${Math.round(intensity * 100)}%)`
+                : "Unknown";
+
+
+        document.getElementById("emotionText").textContent =
+            emotion
+                ? `${emotion} (${Math.round(intensity * 100)}%)`
+                : "Unknown";
 
         if (typeof data.speaker_confidence === "number") {
          document.getElementById("speakerConfidenceText").textContent =
